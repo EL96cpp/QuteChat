@@ -22,7 +22,7 @@ void NicknameDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QRadialGradient radialGrad(rect.center(), 200);
 
     radialGrad.setColorAt(0, QColor("#C0003a6b"));
-    radialGrad.setColorAt(0.5, QColor("#901a82d9"));
+    radialGrad.setColorAt(0.7, QColor("#901a82d9"));
     radialGrad.setColorAt(1, QColor("#40cce3f7"));
 
     QPainterPath rounded_rect_path;

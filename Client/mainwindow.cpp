@@ -285,7 +285,7 @@ void MainWindow::on_ChatSendButton_clicked()
 {
     if (!ui->chat_message_edit->text().isEmpty()) {
         QString text = ui->chat_message_edit->text();
-        emit SendMessage(QTime::currentTime().toString(), text);
+        emit SendMessage(QTime::currentTime().toString().sliced(0, 5), text);
         ui->chat_message_edit->clear();
     }
 }
@@ -295,7 +295,7 @@ void MainWindow::on_chat_message_edit_returnPressed()
 {
     if (!ui->chat_message_edit->text().isEmpty()) {
         QString text = ui->chat_message_edit->text();
-        emit SendMessage(QTime::currentTime().toString(), text);
+        emit SendMessage(QTime::currentTime().toString().sliced(0, 5), text);
         ui->chat_message_edit->clear();
     }
 }

@@ -58,7 +58,6 @@ void Client::ReadJson(const QJsonObject &json_object)
 {
 
     QJsonValue type = json_object.value("type");
-    qDebug() << type.toString();
     if (type.toString().compare(QLatin1String("login"), Qt::CaseInsensitive) == 0) {
 
         QJsonValue login_result = json_object.value(QLatin1String("result"));
