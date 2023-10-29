@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>Font.ttf</file>
         <file>background.jpeg</file>
+        <file>Fonts/LogoFont.ttf</file>
+        <file>Fonts/TypingFont.ttf</file>
     </qresource>
 </RCC>

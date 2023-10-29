@@ -57,6 +57,8 @@ private slots:
 
     void on_ChatSendButton_clicked();
 
+    void on_chat_message_edit_returnPressed();
+
 private:
     void SetFont();
 

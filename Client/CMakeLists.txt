@@ -19,6 +19,8 @@ set(PROJECT_SOURCES
         mainwindow.ui
         client.cpp
         client.h
+        messagedelegate.cpp
+        messagedelegate.h
         resources.qrc
 )
 

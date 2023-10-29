@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "messagedelegate.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -28,12 +29,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::Login, client, &Client::Login);
     connect(this, &MainWindow::Register, client, &Client::Register);
 
-    ui->chat_tableview->horizontalHeader()->setVisible(false);
-    ui->chat_tableview->verticalHeader()->setVisible(false);
-    ui->chat_tableview->setShowGrid(false);
+    MessageDelegate* delegate = new MessageDelegate(this);
+
+    delegate->setContentsMargins(8, 8, 8, 8);
+    delegate->setHorizontalSpacing(8);
+    delegate->setVerticalSpacing(4);
+
+    ui->chat_listview->setItemDelegate(delegate);
+    ui->chat_listview->setSpacing(1);
+    ui->chat_listview->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->chat_userlist_view->setModel(userlist_model);
-    ui->chat_tableview->setModel(chat_model);
+    ui->chat_listview->setModel(chat_model);
     ui->log_password_edit->setEchoMode(QLineEdit::Password);
     ui->reg_password_edit->setEchoMode(QLineEdit::Password);
     ui->reg_confirm_password_edit->setEchoMode(QLineEdit::Password);
@@ -74,32 +81,18 @@ void MainWindow::UserLeft(const QString &nickname)
 void MainWindow::AddMessageToView(const QString &nickname, const QString &text, const QString &time)
 {
 
-    QString modified_text = text;
-    int new_row_step = 50;
-    for (int i = new_row_step; i < text.length(); i += new_row_step + 1) {
-        modified_text.insert(i, '\n');
-    }
-
     QList<QStandardItem*> items;
-    items.append(new QStandardItem(nickname + ":"));
-    items.append(new QStandardItem(modified_text));
+    items.append(new QStandardItem(nickname));
+    items.last()->setFlags(Qt::NoItemFlags);
+    items.append(new QStandardItem(text));
+    items.last()->setFlags(Qt::NoItemFlags);
     items.append(new QStandardItem(time));
+    items.last()->setFlags(Qt::NoItemFlags);
 
-    QFont font;
-    font.setBold(true);
-
-    items[0]->setTextAlignment(Qt::AlignTop);
-    items[0]->setFont(font);
-    items[2]->setTextAlignment(Qt::AlignTop);
-    items[2]->setFont(font);
     chat_model->appendRow(items);
-    ui->chat_tableview->resizeRowsToContents();
 
-    ui->chat_tableview->setColumnWidth(0, 100);
-    ui->chat_tableview->setColumnWidth(1, 550);
-    ui->chat_tableview->setColumnWidth(2, 150);
-    ui->chat_tableview->resizeRowsToContents();
-    ui->chat_tableview->scrollToBottom();
+    ui->chat_listview->scrollToBottom();
+
 }
 
 void MainWindow::ConnectionError()
@@ -148,6 +141,8 @@ void MainWindow::AddToUserlist(const QString &nickname)
 {
 
     QStandardItem* nickname_item = new QStandardItem(nickname);
+    nickname_item->setTextAlignment(Qt::AlignCenter);
+    nickname_item->setFlags(Qt::NoItemFlags);
     userlist_model->appendRow(nickname_item);
 
 }
@@ -155,50 +150,65 @@ void MainWindow::AddToUserlist(const QString &nickname)
 void MainWindow::AddUserJoinedMessageToView(const QString &nickname)
 {
 
-    QList<QStandardItem*> items;
-    items.append(new QStandardItem(""));
-    items.append(new QStandardItem(nickname + " joined chat"));
-    items.append(new QStandardItem(""));
-    items[1]->setTextAlignment(Qt::AlignHCenter);
-    chat_model->appendRow(items);
-    ui->chat_tableview->scrollToBottom();
+    QStandardItem* item = new QStandardItem(nickname + " joined chat");
+    item->setFlags(Qt::NoItemFlags);
+    chat_model->appendRow(item);
+    ui->chat_listview->scrollToBottom();
 
 }
 
 void MainWindow::AddUserLeftMessageToView(const QString &nickname)
 {
 
-    QList<QStandardItem*> items;
-    items.append(new QStandardItem(""));
-    items.append(new QStandardItem(nickname + " left chat"));
-    items.append(new QStandardItem(""));
-    items[1]->setTextAlignment(Qt::AlignHCenter);
-    chat_model->appendRow(items);
-    ui->chat_tableview->scrollToBottom();
+    QStandardItem* item = new QStandardItem(nickname + " left chat");
+    item->setFlags(Qt::NoItemFlags);
+    chat_model->appendRow(item);
+    ui->chat_listview->scrollToBottom();
 }
 
 void MainWindow::SetFont()
 {
-    qint32 font_id = QFontDatabase::addApplicationFont(":/Font.ttf");
-    QStringList font_list = QFontDatabase::applicationFontFamilies(font_id);
-    QString font_family = font_list.first();
-    ui->main_label->setFont(QFont(font_family));
-    ui->StartLogButton->setFont(QFont(font_family));
-    ui->StartRegButton->setFont(QFont(font_family));
+    qint32 logo_font_id = QFontDatabase::addApplicationFont(":/Fonts/LogoFont.ttf");
+    qint32 typing_font_id = QFontDatabase::addApplicationFont(":/Fonts/TypingFont.ttf");
+    QStringList logo_font_list = QFontDatabase::applicationFontFamilies(logo_font_id);
+    QStringList typing_font_list = QFontDatabase::applicationFontFamilies(typing_font_id);
+    QString logo_font_family = logo_font_list.first();
+    QString typing_font_family = typing_font_list.first();
 
-    ui->LogLogButton->setFont(QFont(font_family));
-    ui->LogReturnButton->setFont(QFont(font_family));
-    ui->log_nickname_label->setFont(QFont(font_family));
-    ui->log_password_label->setFont(QFont(font_family));
+    // Set logo font
+    ui->main_label->setFont(QFont(logo_font_family));
+    ui->StartLogButton->setFont(QFont(logo_font_family));
+    ui->StartRegButton->setFont(QFont(logo_font_family));
 
-    ui->RegRegButton->setFont(QFont(font_family));
-    ui->RegReturnButton->setFont(QFont(font_family));
-    ui->reg_nickname_label->setFont(QFont(font_family));
-    ui->reg_password_label->setFont(QFont(font_family));
-    ui->reg_confirm_password_label->setFont(QFont(font_family));
+    ui->LogLogButton->setFont(QFont(logo_font_family));
+    ui->LogReturnButton->setFont(QFont(logo_font_family));
+    ui->log_nickname_label->setFont(QFont(logo_font_family));
+    ui->log_password_label->setFont(QFont(logo_font_family));
 
-    ui->ChatSendButton->setFont(QFont(font_family));
-    ui->chat_users_label->setFont(QFont(font_family));
+    ui->RegRegButton->setFont(QFont(logo_font_family));
+    ui->RegReturnButton->setFont(QFont(logo_font_family));
+    ui->reg_nickname_label->setFont(QFont(logo_font_family));
+    ui->reg_password_label->setFont(QFont(logo_font_family));
+    ui->reg_confirm_password_label->setFont(QFont(logo_font_family));
+
+    ui->ChatSendButton->setFont(QFont(logo_font_family));
+    ui->chat_users_label->setFont(QFont(logo_font_family));
+
+    // Set typing font
+    ui->log_password_edit->setFont(QFont(typing_font_family));
+    ui->log_nickname_edit->setFont(QFont(typing_font_family));
+    ui->reg_nickname_edit->setFont(QFont(typing_font_family));
+    ui->reg_password_edit->setFont(QFont(typing_font_family));
+    ui->reg_confirm_password_edit->setFont(QFont(typing_font_family));
+
+    ui->chat_message_edit->setFont(QFont(typing_font_family));
+    ui->chat_userlist_view->setFont(QFont(typing_font_family));
+
+    QFont font(typing_font_family);
+    font.setPointSize(18);
+    ui->chat_listview->setFont(font);
+
+
 }
 
 
@@ -265,6 +275,16 @@ void MainWindow::on_LogLogButton_clicked()
 
 
 void MainWindow::on_ChatSendButton_clicked()
+{
+    if (!ui->chat_message_edit->text().isEmpty()) {
+        QString text = ui->chat_message_edit->text();
+        emit SendMessage(QTime::currentTime().toString(), text);
+        ui->chat_message_edit->clear();
+    }
+}
+
+
+void MainWindow::on_chat_message_edit_returnPressed()
 {
     if (!ui->chat_message_edit->text().isEmpty()) {
         QString text = ui->chat_message_edit->text();
