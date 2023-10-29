@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         client.h
         messagedelegate.cpp
         messagedelegate.h
+        nicknamedelegate.cpp
+        nicknamedelegate.h
         resources.qrc
 )
 

@@ -113,7 +113,6 @@ QSize MessageDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
 {
 
     QStyleOptionViewItem opt(option);
-    //opt.font.setPointSize(25);
     initStyleOption(&opt, index);
 
     if (index.model()->data(index.model()->index(index.row(), 1)).toString().isEmpty()) {
@@ -144,7 +143,7 @@ QSize MessageDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
 
 
         return QSize(opt.rect.width(), margins.top() + message_rect.height() +
-                                           horizontal_spacing + time_rect.height() + margins.bottom());
+                                       time_rect.height() + margins.bottom());
 
     }
 

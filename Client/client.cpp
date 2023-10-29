@@ -26,7 +26,9 @@ void Client::ConnectToServer(const QString& address, const quint16& port)
         emit ConnectionError();
 
     } else {
+
         qDebug() << "Connected!";
+
     }
 }
 

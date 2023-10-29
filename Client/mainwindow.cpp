@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "messagedelegate.h"
+#include "nicknamedelegate.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -38,6 +39,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->chat_listview->setItemDelegate(delegate);
     ui->chat_listview->setSpacing(1);
     ui->chat_listview->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+
+    NicknameDelegate* nickname_delegate = new NicknameDelegate(this);
+
+    ui->chat_userlist_view->setItemDelegate(nickname_delegate);
+    ui->chat_userlist_view->setSpacing(1);
 
     ui->chat_userlist_view->setModel(userlist_model);
     ui->chat_listview->setModel(chat_model);
